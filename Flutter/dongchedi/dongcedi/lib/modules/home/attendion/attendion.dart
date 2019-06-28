@@ -30,9 +30,9 @@ class _AttendionPageState extends State<AttendionPage> {
 
     API().getAttendionVideo((response) {
       VideoResp resp = response;
-      if (resp.data.length > 0) {
+      if (resp.attendionData.length > 0) {
         setState(() {
-          attendionVideoList = resp.data;
+          attendionVideoList = resp.attendionData;
         });
       }
     });

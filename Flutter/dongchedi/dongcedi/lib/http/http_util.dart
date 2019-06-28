@@ -18,7 +18,7 @@ class HttpUtil {
     BaseOptions options = new BaseOptions(
       baseUrl: host,
       connectTimeout: 5000,
-      responseType : ResponseType.json,
+      responseType : ResponseType.plain,
     );
     dio = new Dio(options);
   }

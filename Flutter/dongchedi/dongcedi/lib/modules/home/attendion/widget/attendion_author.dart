@@ -3,6 +3,9 @@ import 'package:dongcedi/utils/screen_utils.dart';
 import '../attendion_bean.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../bean/attendion_video_bean.dart';
+import 'package:dongcedi/utils/utils.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 
 
 //关注作者
@@ -46,7 +49,7 @@ class _AuthorCellState extends State<AuthorCell> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        widget.attendion.name,
+                        widget.attendion.name.toString(),
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
@@ -123,6 +126,7 @@ class AttendionCell extends StatefulWidget {
 }
 
 class _AttendionCellState extends State<AttendionCell> {
+
   @override 
   Widget build(BuildContext context) {
     return Container(
@@ -136,26 +140,29 @@ class _AttendionCellState extends State<AttendionCell> {
                 children: <Widget>[
                   ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
-                    child: Image.asset(
-                      'assets/images/icon.png',
-                      width: ScreenUtils.get375Width(context, 35),
-                      height: ScreenUtils.get375Width(context, 35),
-                    ),
+                    child: CachedNetworkImage(
+                      width: ScreenUtils.get375Width(context, 45),
+                      height: ScreenUtils.get375Width(context, 45),
+                      imageUrl: widget.video.info.user_info.avatar_url,
+                    )
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 6),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text('30秒懂车' , style: TextStyle(
+                        Text(widget.video.info.user_info.name , style: TextStyle(
                           color: Colors.black,
                           fontSize: 14,
                           fontWeight: FontWeight.bold
                         ),),
-                        Text('05月15日', style: TextStyle(
+                        Container(
+                          width: 200,
+                          child: Text(Utils.getTimeStamp(widget.video.info.display_time) + ' · '+widget.video.info.user_info.motor_auth_show_info.auth_v_desc, maxLines: 1,overflow:TextOverflow.ellipsis,style: TextStyle(
                           color: Colors.black,
                           fontSize: 12,
                         ),),
+                        )
                       ],
                     ),
                   )
@@ -164,51 +171,59 @@ class _AttendionCellState extends State<AttendionCell> {
             AttendtinButton()
             ],
           ),
-          Padding(
+          Container(
             padding: EdgeInsets.only(top: 10),
-            child: Text(widget.video.info.title , style: TextStyle(
-              fontSize: 20,
+            width: ScreenUtils.screenW(context) - 30,
+            child: Text(widget.video.info.title , textAlign: TextAlign.left,style: TextStyle(
+              fontSize: 18,
               color: Colors.black,
               fontWeight: FontWeight.normal
             ),),
           ),
         Container(
-          color: Colors.yellow,
           margin: EdgeInsets.only(top: 10) ,
-          height: ScreenUtils.get375Width(context, 200), ),
+          height: ScreenUtils.screenW(context) * 0.5625, 
+          child: CachedNetworkImage(
+            imageUrl: widget.video.info.image_list[0].url,
+          ),
+          ),
         Container(
           height: 45,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('思域'),
+              Text(''),
               Row(
                 children: <Widget>[
                   FlatButton(
                     onPressed: (){},
                     child: Row(
                       children: <Widget>[
-                        Icon(Icons.share),
-                        Text('分享')
+                        Image.asset('assets/images/share.png',width: 20,height: 20,color: Color.fromARGB(255, 50, 50, 50),),
+                        Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text('分享'),
+                        )
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 5,),
-                    child: Icon(Icons.comment, size: 25, color: Color.fromARGB(255, 50, 50, 50),),
+                    child: Icon(FontAwesomeIcons.commentDots,size: 20,color: Color.fromARGB(255, 50, 50, 50),),
+                    // child: Image.asset('assets/images/comment.png',width: 25,height: 25,color: Color.fromARGB(255, 50, 50, 50),),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 5),
-                    child: Text('6'),
+                    child: Text(widget.video.info.comment_count.toString()),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
-                    child: Icon(Icons.undo, size: 25, color: Color.fromARGB(255, 50, 50, 50),),
+                    child: Icon(FontAwesomeIcons.thumbsUp,size: 20,color: Color.fromARGB(255, 50, 50, 50),),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 5),
-                    child: Text('6'),
+                    child: Text(widget.video.info.user_info.follower_count.toString()),
                   )
                 ],
               )

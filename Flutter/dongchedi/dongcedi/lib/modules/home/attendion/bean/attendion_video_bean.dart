@@ -3,41 +3,40 @@ import 'dart:convert' show json;
 class VideoResp {
 
   int feed_flag;
-  int login_status;
+  int loginStatus;
   int show_et_status;
   int total_number;
   bool has_more;
   bool has_more_to_refresh;
   String message;
   String post_content_hint;
-  List<AttendionVideo> data;
+  List<AttendionVideo> attendionData;
   Tip tips;
 
-  VideoResp.fromParams({this.feed_flag, this.login_status, this.show_et_status, this.total_number, this.has_more, this.has_more_to_refresh, this.message, this.post_content_hint, this.data, this.tips});
+  VideoResp.fromParams({this.feed_flag, this.loginStatus, this.show_et_status, this.total_number, this.has_more, this.has_more_to_refresh, this.message, this.post_content_hint, this.attendionData, this.tips});
 
   factory VideoResp(jsonStr) => jsonStr == null ? null : jsonStr is String ? new VideoResp.fromJson(json.decode(jsonStr)) : new VideoResp.fromJson(jsonStr);
   
   VideoResp.fromJson(jsonRes) {
     feed_flag = jsonRes['feed_flag'];
-    login_status = jsonRes['login_status'];
+    loginStatus = jsonRes['login_status'];
     show_et_status = jsonRes['show_et_status'];
     total_number = jsonRes['total_number'];
     has_more = jsonRes['has_more'];
     has_more_to_refresh = jsonRes['has_more_to_refresh'];
     message = jsonRes['message'];
     post_content_hint = jsonRes['post_content_hint'];
-    data = jsonRes['data'] == null ? null : [];
+    attendionData = jsonRes['data'] == null ? null : [];
 
-    for (var dataItem in data == null ? [] : jsonRes['data']){
-            data.add(dataItem == null ? null : new AttendionVideo.fromJson(dataItem));
+    for (var dataItem in attendionData == null ? [] : jsonRes['data']){
+            attendionData.add(dataItem == null ? null : new AttendionVideo.fromJson(dataItem));
     }
-
     tips = jsonRes['tips'] == null ? null : new Tip.fromJson(jsonRes['tips']);
   }
 
   @override
   String toString() {
-    return '{"feed_flag": $feed_flag,"login_status": $login_status,"show_et_status": $show_et_status,"total_number": $total_number,"has_more": $has_more,"has_more_to_refresh": $has_more_to_refresh,"message": ${message != null?'${json.encode(message)}':'null'},"post_content_hint": ${post_content_hint != null?'${json.encode(post_content_hint)}':'null'},"data": $data,"tips": $tips}';
+    return '{"feed_flag": $feed_flag,"login_status": $loginStatus,"show_et_status": $show_et_status,"total_number": $total_number,"has_more": $has_more,"has_more_to_refresh": $has_more_to_refresh,"message": ${message != null?'${json.encode(message)}':'null'},"post_content_hint": ${post_content_hint != null?'${json.encode(post_content_hint)}':'null'},"data": $attendionData,"tips": $tips}';
   }
 }
 
