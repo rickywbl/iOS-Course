@@ -128,6 +128,10 @@ class ScreenUtils {
     return width * (screenW(context)/ 375.0);
   }
 
+  static double getTopPadding(BuildContext context,double width) {
+    return MediaQuery.of(context).padding.top;
+  }
+
 
   /// returns the size after adaptation according to the screen height.(unit dp or pt)
   /// 返回根据屏幕高适配后尺寸（单位 dp or pt）

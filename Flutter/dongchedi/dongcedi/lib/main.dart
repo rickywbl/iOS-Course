@@ -9,8 +9,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '懂车帝',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.white,
         appBarTheme: AppBarTheme(color: Colors.white )
       ),
       home: Scaffold(

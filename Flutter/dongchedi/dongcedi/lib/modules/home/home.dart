@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dongcedi/utils/screen_utils.dart';
 import 'package:dongcedi/modules/home/attendion/attendion.dart';
+import 'find/home_find_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
     return DefaultTabController(
         length: _tabs.length,
         initialIndex: 0,
-        child: SafeArea(
+        child: Container(
           child: NestedScrollView(
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
@@ -28,7 +29,9 @@ class _HomePageState extends State<HomePage> {
                   handle:
                       NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                   child: SliverAppBar(
+                    backgroundColor: Colors.white,
                     title: Container(
+                      color: Colors.white,
                       width: 300,
                       child: TabBar(
                         unselectedLabelColor: Colors.grey,
@@ -92,7 +95,7 @@ class _HomePageState extends State<HomePage> {
             body: TabBarView(
               children: <Widget>[
                 AttendionPage(),
-                Container(),
+                HomeFindPage(),
                 Container(),
               ],
             ),

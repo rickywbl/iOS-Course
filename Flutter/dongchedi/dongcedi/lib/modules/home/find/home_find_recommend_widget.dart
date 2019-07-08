@@ -1,0 +1,278 @@
+import 'package:dongcedi/utils/screen_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:banner_view/banner_view.dart';
+import 'package:dongcedi/modules/home/find/bean/banner_bean.dart';
+import 'package:dongcedi/http/api.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:math' as Math;
+
+//发现推荐模块
+class HomeFindRecommendWidget extends StatefulWidget {
+  @override
+  _HomeFindRecommendWidgetState createState() =>
+      _HomeFindRecommendWidgetState();
+}
+
+class _HomeFindRecommendWidgetState extends State<HomeFindRecommendWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: Text('推荐'));
+  }
+}
+
+//发现精选模块
+class HomeFindBestWidget extends StatefulWidget {
+  @override
+  _HomeFindBestWidgetState createState() => _HomeFindBestWidgetState();
+}
+
+class _HomeFindBestWidgetState extends State<HomeFindBestWidget> {
+  List<BannerBean> banners;
+  List<IconBean> icons;
+  List<VideoInfoBean> videoInfos;
+  int itemCount = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    API().getBanner((resp) {
+      setState(() {
+        banners = resp['banners'];
+        icons = resp['icons'];
+        videoInfos = resp['videos'];
+        int count = videoInfos == null ? 0 : videoInfos.length;
+        if (banners != null) {
+          count = count + 1;
+        }
+        if (icons != null) {
+          count = count + 1;
+        }
+        itemCount = count;
+        print(itemCount);
+      });
+    });
+  }
+
+  getBannerItemWidgets() {
+    return banners.map((BannerBean bean) {
+      return Container(
+        child: CachedNetworkImage(
+          imageUrl: bean.imageUrl,
+        ),
+      );
+    }).toList();
+  }
+
+  getBannerWidget() {
+    return banners == null
+        ? Container()
+        : Container(
+            height: ScreenUtils.get375Width(context, 150),
+            child: BannerView(
+              getBannerItemWidgets(),
+              indicatorBuilder: (context, indicator) {
+                return _indicatorContainer(indicator);
+              },
+              animationDuration: Duration(milliseconds: 20000),
+              indicatorNormal: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(3)),
+                child: Container(
+                  color: Colors.grey,
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+              indicatorSelected: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(3)),
+                child: Container(
+                  color: Colors.white,
+                  width: 12,
+                  height: 6,
+                ),
+              ),
+              autoRolling: false,
+            ),
+          );
+  }
+
+  _indicatorContainer(Widget indicator) {
+    var container = new Container(
+      height: 30.0,
+      child: new Stack(
+        children: <Widget>[
+          new Opacity(
+            opacity: 0.5,
+            child: new Container(),
+          ),
+          new Align(
+            alignment: Alignment.center,
+            child: indicator,
+          ),
+        ],
+      ),
+    );
+    return new Align(
+      alignment: Alignment.bottomCenter,
+      child: container,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.all(0),
+        padding: EdgeInsets.only(left: 15, right: 15, top: 10),
+        child: ListView.builder(
+          itemCount: itemCount,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return getBannerWidget();
+            }
+            if (index == 1) {
+              return IconWidget(
+                iconBeans: icons,
+              );
+            }
+            return Text('ROW' + index.toString());
+          },
+        ));
+  }
+}
+
+//发现视频
+class HomeFindVideoWidget extends StatefulWidget {
+  @override
+  _HomeFindVideoWidgetState createState() => _HomeFindVideoWidgetState();
+}
+
+class _HomeFindVideoWidgetState extends State<HomeFindVideoWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text('视频'),
+    );
+  }
+}
+
+//发现推荐工具
+class IconWidget extends StatefulWidget {
+  final List<IconBean> iconBeans;
+  IconWidget({Key key, this.iconBeans}) : super(key: key);
+  @override
+  _IconWidgetState createState() => _IconWidgetState();
+}
+
+class _IconWidgetState extends State<IconWidget> {
+  PageController _pageController;
+  int selectIndex = 0;
+
+  getIconItem(BuildContext context, List<IconBean> icons) {
+    return Container(
+      width: ScreenUtils.screenW(context) - 30,
+      height: 80,
+      child: Row(
+        children: getIcon(icons),
+      ),
+    );
+  }
+
+  getIcon(List<IconBean> icons) {
+    var width = (ScreenUtils.screenW(context) - 30) / 4;
+    return icons.map((IconBean bean) {
+      return Container(
+        width: width,
+        child: Column(
+          children: <Widget>[
+            CachedNetworkImage(
+              imageUrl: bean.imageUrl,
+              width: 30,
+              height: 30,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 5),
+              child: Text(bean.title),
+            )
+          ],
+        ),
+      );
+    }).toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _pageController.addListener(() {
+      setState(() {
+        selectIndex = (_pageController.offset.toInt() /
+                (ScreenUtils.screenW(context) - 30))
+            .toInt();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
+    // _pageController.removeListener(listener);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      height: 80,
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            flex: 3,
+            child: widget.iconBeans == null
+                ? Container()
+                : Container(
+                    child: PageView.builder(
+                    scrollDirection: Axis.horizontal,
+                    controller: _pageController,
+                    itemCount: 2,
+                    itemBuilder: (BuildContext context, int index) {
+                      return getIconItem(context,
+                          widget.iconBeans.sublist(index * 4, index * 4 + 4));
+                    },
+                  )),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(3)),
+                      child: Container(
+                          width: 6,
+                          height: 6,
+                          color:
+                              selectIndex == 0 ? Colors.yellow : Colors.grey),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        child: Container(
+                            width: 6,
+                            height: 6,
+                            color:
+                                selectIndex == 1 ? Colors.yellow : Colors.grey),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}

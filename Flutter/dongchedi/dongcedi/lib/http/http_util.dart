@@ -30,7 +30,6 @@ class HttpUtil {
         url,
         queryParameters: data,
       );
-      print('get请求成功!response.data：${response.data}');
     } on DioError catch (e){
       if (CancelToken.isCancel(e)){
         print('get请求取消! ' + e.message);
@@ -48,7 +47,6 @@ class HttpUtil {
         data : data,
         cancelToken: cancelToken
       );
-      print('post请求成功!response.data：${response.data}');
     } on DioError catch (e) {
       if (CancelToken.isCancel(e)) {
         print('post请求取消! ' + e.message);
