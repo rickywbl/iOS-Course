@@ -126,6 +126,7 @@ class API{
 
     for (var i = 2; i < map['data'].length;  i++) {
       VideoInfoBean info = VideoInfoBean.fromJson(map['data'][i]['info']);
+      print(info.title);
       videos.add(info);
     }
 

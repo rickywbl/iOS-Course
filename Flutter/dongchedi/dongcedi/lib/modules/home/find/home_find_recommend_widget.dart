@@ -5,6 +5,10 @@ import 'package:dongcedi/modules/home/find/bean/banner_bean.dart';
 import 'package:dongcedi/http/api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:math' as Math;
+import 'home_find_video_cell.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_easyrefresh/ball_pulse_header.dart';
+import 'package:flutter_easyrefresh/ball_pulse_footer.dart';
 
 //发现推荐模块
 class HomeFindRecommendWidget extends StatefulWidget {
@@ -14,9 +18,85 @@ class HomeFindRecommendWidget extends StatefulWidget {
 }
 
 class _HomeFindRecommendWidgetState extends State<HomeFindRecommendWidget> {
+  GlobalKey<EasyRefreshState> _easyRefreshKey =
+      new GlobalKey<EasyRefreshState>();
+  GlobalKey<RefreshHeaderState> _headerKey =
+      new GlobalKey<RefreshHeaderState>();
+  GlobalKey<RefreshFooterState> _footerKey =
+      new GlobalKey<RefreshFooterState>();
+
+  int dataSelectedIndex = 0;
+
+  List<Tab> tabs = [
+    Tab(
+      child: Text('昨天'),
+    ),
+    Tab(
+      child: Text('7-9'),
+    ),
+    Tab(
+      child: Text('7-10'),
+    ),
+  ];
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(child: Text('推荐'));
+    return Container(
+      child: EasyRefresh(
+          key: _easyRefreshKey,
+          refreshHeader: BallPulseHeader(
+            color: Colors.yellow,
+            key: _headerKey,
+          ),
+          onRefresh: () {},
+          child: ListView.builder(
+            itemCount: 20,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Container(
+                  height: 60,
+                  child: ListView.builder(
+                    itemCount: 7,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            dataSelectedIndex = index;
+                          });
+                        },
+                        child: HomeDataCell(
+                          title: '7月' + index.toString() + '日',
+                          selected: dataSelectedIndex == index ? true : false,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+              if (index == 1) {
+                return Container(
+                  height: 150,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 7,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: 300,
+                        child: Text("PageView ++ " + index.toString()),
+                      );
+                    },
+                  ),
+                );
+              }
+              return Text('Row ++++++' + index.toString());
+            },
+          )),
+    );
   }
 }
 
@@ -31,24 +111,39 @@ class _HomeFindBestWidgetState extends State<HomeFindBestWidget> {
   List<IconBean> icons;
   List<VideoInfoBean> videoInfos;
   int itemCount = 0;
+  int otherCount = 0;
+
+  GlobalKey<EasyRefreshState> _easyRefreshKey =
+      new GlobalKey<EasyRefreshState>();
+  GlobalKey<RefreshHeaderState> _headerKey =
+      new GlobalKey<RefreshHeaderState>();
+  GlobalKey<RefreshFooterState> _footerKey =
+      new GlobalKey<RefreshFooterState>();
+
   @override
   void initState() {
     super.initState();
+    getApiRequest();
+  }
 
+  getApiRequest() {
     API().getBanner((resp) {
       setState(() {
         banners = resp['banners'];
         icons = resp['icons'];
         videoInfos = resp['videos'];
         int count = videoInfos == null ? 0 : videoInfos.length;
+        int count2 = 0;
         if (banners != null) {
           count = count + 1;
+          count2 = count2 + 1;
         }
         if (icons != null) {
           count = count + 1;
+          count2 = count2 + 1;
         }
         itemCount = count;
-        print(itemCount);
+        otherCount = count2;
       });
     });
   }
@@ -122,19 +217,36 @@ class _HomeFindBestWidgetState extends State<HomeFindBestWidget> {
     return Container(
         margin: EdgeInsets.all(0),
         padding: EdgeInsets.only(left: 15, right: 15, top: 10),
-        child: ListView.builder(
-          itemCount: itemCount,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return getBannerWidget();
-            }
-            if (index == 1) {
-              return IconWidget(
-                iconBeans: icons,
-              );
-            }
-            return Text('ROW' + index.toString());
+        child: EasyRefresh(
+          key: _easyRefreshKey,
+          refreshHeader: BallPulseHeader(
+            key: _headerKey,
+            color: Colors.yellow,
+          ),
+          refreshFooter: BallPulseFooter(
+            key: _footerKey,
+            color: Colors.yellow,
+          ),
+          loadMore: () {},
+          onRefresh: () {
+            getApiRequest();
           },
+          child: ListView.builder(
+            itemCount: itemCount,
+            itemBuilder: (context, index) {
+              if (index == 0 && banners != null) {
+                return getBannerWidget();
+              }
+              if (index == 1 && icons != null) {
+                return IconWidget(
+                  iconBeans: icons,
+                );
+              }
+              return HomeVideoOneImageCell(
+                videoInfo: videoInfos[index - otherCount],
+              );
+            },
+          ),
         ));
   }
 }
