@@ -1,6 +1,7 @@
 import 'package:dongcedi/utils/screen_utils.dart';
 import 'package:flutter/material.dart';
 import 'home_find_recommend_widget.dart';
+import 'home_find_video_page.dart';
 
 class HomeFindPage extends StatefulWidget {
   @override

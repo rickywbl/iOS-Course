@@ -1,5 +1,3 @@
-import 'dart:ui' as prefix0;
-
 import 'package:dongcedi/modules/home/attendion/bean/attendion_video_bean.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -40,9 +38,11 @@ class _HomeVideoOneImageCellState extends State<HomeVideoOneImageCell> {
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(right: 10, top: 20),
-                            child: Text(widget.videoInfo.repostInfo.name,
+                            child: Container(
+                              child: Text(widget.videoInfo.repostInfo.name,maxLines: 1,
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
+                                    fontSize: 12, color: Colors.grey),)
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.only(right: 10, top: 20),
@@ -68,7 +68,7 @@ class _HomeVideoOneImageCellState extends State<HomeVideoOneImageCell> {
                   child: CachedNetworkImage(
                     width: 120,
                     height: 90,
-                    imageUrl: widget.videoInfo.imageList[0].url,
+                    imageUrl: widget.videoInfo.repostInfo.imageUrl,
                     placeholder: (BuildContext context, String content) {
                       Container(
                         color: Colors.grey,

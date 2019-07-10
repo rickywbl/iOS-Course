@@ -8,6 +8,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '懂车帝',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         backgroundColor: Colors.white,
         appBarTheme: AppBarTheme(color: Colors.white )

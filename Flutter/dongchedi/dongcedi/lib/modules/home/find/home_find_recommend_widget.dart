@@ -1,10 +1,11 @@
 import 'package:dongcedi/utils/screen_utils.dart';
+import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:banner_view/banner_view.dart';
 import 'package:dongcedi/modules/home/find/bean/banner_bean.dart';
 import 'package:dongcedi/http/api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'dart:math' as Math;
+import 'dart:math';
 import 'home_find_video_cell.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/ball_pulse_header.dart';
@@ -26,6 +27,8 @@ class _HomeFindRecommendWidgetState extends State<HomeFindRecommendWidget> {
       new GlobalKey<RefreshFooterState>();
 
   int dataSelectedIndex = 0;
+  ScrollController _scrollController;
+  double itemWidth;
 
   List<Tab> tabs = [
     Tab(
@@ -40,11 +43,22 @@ class _HomeFindRecommendWidgetState extends State<HomeFindRecommendWidget> {
   ];
   @override
   void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener((){
+
+    });
     super.initState();
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    itemWidth = ScreenUtils.screenW(context) - 50;
     return Container(
       child: EasyRefresh(
           key: _easyRefreshKey,
@@ -68,6 +82,7 @@ class _HomeFindRecommendWidgetState extends State<HomeFindRecommendWidget> {
                           setState(() {
                             dataSelectedIndex = index;
                           });
+                        _scrollController.animateTo(itemWidth* 2 * dataSelectedIndex, duration: Duration(seconds: 1), curve: Curves.ease);
                         },
                         child: HomeDataCell(
                           title: '7月' + index.toString() + '日',
@@ -81,14 +96,13 @@ class _HomeFindRecommendWidgetState extends State<HomeFindRecommendWidget> {
               if (index == 1) {
                 return Container(
                   height: 150,
+                  width: ScreenUtils.screenW(context),
                   child: ListView.builder(
+                    controller: _scrollController,
                     scrollDirection: Axis.horizontal,
                     itemCount: 7,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: 300,
-                        child: Text("PageView ++ " + index.toString()),
-                      );
+                    itemBuilder: (context,index){
+                      return FindRecommendDataVideoCell(videos: ['111','22'],);
                     },
                   ),
                 );
@@ -106,12 +120,13 @@ class HomeFindBestWidget extends StatefulWidget {
   _HomeFindBestWidgetState createState() => _HomeFindBestWidgetState();
 }
 
-class _HomeFindBestWidgetState extends State<HomeFindBestWidget> {
+class _HomeFindBestWidgetState extends State<HomeFindBestWidget> with AutomaticKeepAliveClientMixin{
   List<BannerBean> banners;
   List<IconBean> icons;
   List<VideoInfoBean> videoInfos;
   int itemCount = 0;
   int otherCount = 0;
+  bool isLoading = false;
 
   GlobalKey<EasyRefreshState> _easyRefreshKey =
       new GlobalKey<EasyRefreshState>();
@@ -127,6 +142,7 @@ class _HomeFindBestWidgetState extends State<HomeFindBestWidget> {
   }
 
   getApiRequest() {
+    isLoading = true;
     API().getBanner((resp) {
       setState(() {
         banners = resp['banners'];
@@ -144,6 +160,7 @@ class _HomeFindBestWidgetState extends State<HomeFindBestWidget> {
         }
         itemCount = count;
         otherCount = count2;
+        isLoading = false;
       });
     });
   }
@@ -214,7 +231,9 @@ class _HomeFindBestWidgetState extends State<HomeFindBestWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return isLoading? Container(
+      child: Center(child: CircularProgressIndicator(),),
+    ): Container(
         margin: EdgeInsets.all(0),
         padding: EdgeInsets.only(left: 15, right: 15, top: 10),
         child: EasyRefresh(
@@ -249,21 +268,10 @@ class _HomeFindBestWidgetState extends State<HomeFindBestWidget> {
           ),
         ));
   }
-}
 
-//发现视频
-class HomeFindVideoWidget extends StatefulWidget {
   @override
-  _HomeFindVideoWidgetState createState() => _HomeFindVideoWidgetState();
-}
-
-class _HomeFindVideoWidgetState extends State<HomeFindVideoWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Text('视频'),
-    );
-  }
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 //发现推荐工具
@@ -280,7 +288,6 @@ class _IconWidgetState extends State<IconWidget> {
 
   getIconItem(BuildContext context, List<IconBean> icons) {
     return Container(
-      width: ScreenUtils.screenW(context) - 30,
       height: 80,
       child: Row(
         children: getIcon(icons),
@@ -384,6 +391,54 @@ class _IconWidgetState extends State<IconWidget> {
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+
+class FindRecommendDataVideoCell extends StatefulWidget {
+  final List videos;
+  FindRecommendDataVideoCell({Key key,this.videos}): super(key:key);
+  @override
+  _FindRecommendDataVideoCellState createState() => _FindRecommendDataVideoCellState();
+}
+
+class _FindRecommendDataVideoCellState extends State<FindRecommendDataVideoCell> {
+  int count;
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      count = widget.videos == null ? 1 : widget.videos.length;
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 150,
+      width: (ScreenUtils.screenW(context) - 50) * count,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: widget.videos.length,
+        itemBuilder: (context,index){
+          return getItem(index.toString());
+        },
+      )
+    );
+  }
+
+  List<Widget> getWidget(){
+    return widget.videos.map((item){
+      return getItem(item);
+    }).toList();
+  }
+  Widget getItem(String index){
+    return Container(
+      width: ScreenUtils.screenW(context) - 50,
+      color: Color.fromARGB(255,Random().nextInt(255), Random().nextInt(255), Random().nextInt(255)),
+      child: Center(
+        child: Text('Container ========== ' + index),
       ),
     );
   }

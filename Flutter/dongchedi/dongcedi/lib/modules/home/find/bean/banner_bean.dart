@@ -1,5 +1,4 @@
 import 'dart:convert' show json;
-
 import 'package:dongcedi/modules/home/attendion/attendion_bean.dart';
 import 'package:dongcedi/modules/home/attendion/bean/attendion_video_bean.dart';
 import 'package:flutter/widgets.dart';
@@ -52,8 +51,11 @@ class VideoInfoBean {
   int behotTime;
   List<VideoImage> imageList;
   RepostInfo repostInfo;
+  UserInfo userInfo;
+  int diggCount;
+
  
-  VideoInfoBean.fromParams({this.readCount, this.behotTime , this.title ,this.imageList, this.repostInfo , this.commentCount});
+  VideoInfoBean.fromParams({this.readCount, this.behotTime , this.title ,this.imageList, this.repostInfo , this.commentCount , this.diggCount});
 
   factory VideoInfoBean(jsonStr) => jsonStr == null ? null : jsonStr is String ? new VideoInfoBean.fromJson(json.decode(jsonStr)) : new VideoInfoBean.fromJson(jsonStr);
   VideoInfoBean.fromJson(jsonRes){
@@ -62,6 +64,8 @@ class VideoInfoBean {
     title = jsonRes['title'];
     commentCount = jsonRes['comment_count'];
     repostInfo = RepostInfo.fromJson(jsonRes['repost_info']);
+    userInfo = UserInfo.fromJson(jsonRes['user_info']);
+    diggCount = jsonRes['digg_count'];
     imageList = jsonRes['image_list'] == null ? null : [];
     for (var imageItem in imageList == null ? [] : jsonRes['image_list']){
        imageList.add(imageItem == null ? null : new VideoImage.fromJson(imageItem));
@@ -107,6 +111,19 @@ class RepostInfo {
     imageUrl = jsonRes['image_url'];
     itemIdStr = jsonRes['item_id_str'].toString();
   }
+}
 
+class UserInfo {
+  String name;
+  String avatarUrl;
+  String verifiedContent;
+
+  UserInfo.fromParams({this.name, this.avatarUrl , this.verifiedContent,});
+  factory UserInfo(jsonStr) => jsonStr == null ? null : jsonStr is String ? new UserInfo.fromJson(json.decode(jsonStr)) : new UserInfo.fromJson(jsonStr);
+  UserInfo.fromJson(jsonRes){
+    name = jsonRes['name'];
+    avatarUrl = jsonRes['avatar_url'];
+    verifiedContent = jsonRes['verified_content'];
+  }
 }
 
