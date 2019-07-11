@@ -2,6 +2,7 @@ import 'package:dongcedi/utils/screen_utils.dart';
 import 'package:flutter/material.dart';
 import 'home_find_recommend_widget.dart';
 import 'home_find_video_page.dart';
+import 'home_find_new_car.dart';
 
 class HomeFindPage extends StatefulWidget {
   @override
@@ -100,6 +101,10 @@ class _HomeFindPageState extends State<HomeFindPage>
             offstage: !(index == 2),
             child: HomeFindVideoWidget(),
           ),
+          Offstage(
+            offstage: !(index == 3),
+            child: FindNewCarPage(),
+          )
         ],
       ),
     );

@@ -169,7 +169,7 @@ class _HomeFindBestWidgetState extends State<HomeFindBestWidget> with AutomaticK
     return banners.map((BannerBean bean) {
       return Container(
         child: CachedNetworkImage(
-          imageUrl: bean.imageUrl,
+          imageUrl: bean.imageUrl != null ? bean.imageUrl: "https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3700584237,3776606856&fm=58&bpow=512&bpoh=512",
         ),
       );
     }).toList();
@@ -231,9 +231,7 @@ class _HomeFindBestWidgetState extends State<HomeFindBestWidget> with AutomaticK
 
   @override
   Widget build(BuildContext context) {
-    return isLoading? Container(
-      child: Center(child: CircularProgressIndicator(),),
-    ): Container(
+    return Container(
         margin: EdgeInsets.all(0),
         padding: EdgeInsets.only(left: 15, right: 15, top: 10),
         child: EasyRefresh(

@@ -1,4 +1,5 @@
 import 'package:dongcedi/modules/home/attendion/bean/attendion_video_bean.dart';
+import 'package:dongcedi/utils/screen_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import './bean/banner_bean.dart';
@@ -39,10 +40,12 @@ class _HomeVideoOneImageCellState extends State<HomeVideoOneImageCell> {
                           Padding(
                             padding: EdgeInsets.only(right: 10, top: 20),
                             child: Container(
-                              child: Text(widget.videoInfo.repostInfo.name,maxLines: 1,
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey),)
-                            ),
+                                child: Text(
+                              widget.videoInfo.repostInfo.name,
+                              maxLines: 1,
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.grey),
+                            )),
                           ),
                           Padding(
                             padding: EdgeInsets.only(right: 10, top: 20),
@@ -68,7 +71,9 @@ class _HomeVideoOneImageCellState extends State<HomeVideoOneImageCell> {
                   child: CachedNetworkImage(
                     width: 120,
                     height: 90,
-                    imageUrl: widget.videoInfo.repostInfo.imageUrl,
+                    imageUrl: widget.videoInfo.repostInfo.imageUrl == null
+                        ? "https://cdn2.jianshu.io/assets/web/nav-logo-4c7bbafe27adc892f3046e6978459bac.png"
+                        : widget.videoInfo.repostInfo.imageUrl,
                     placeholder: (BuildContext context, String content) {
                       Container(
                         color: Colors.grey,
@@ -149,5 +154,167 @@ class HomeDataCell extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class HomeVideoThreeImageCell extends StatefulWidget {
+  final VideoInfoBean info;
+  HomeVideoThreeImageCell({Key key, this.info}) : super(key: key);
+  @override
+  _HomeVideoThreeImageCellState createState() =>
+      _HomeVideoThreeImageCellState();
+}
+
+class _HomeVideoThreeImageCellState extends State<HomeVideoThreeImageCell> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 15, left: 15, right: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          widget.info.imageList.length == 3 ?  getTitleImageColumnWidget() : getTitleImageRowWidget(),
+          getBottomWidget(),
+          Container(
+            height: 0.5,
+            margin: EdgeInsets.only(top: 5),
+            color: Color.fromRGBO(200, 200, 200, 1.0),
+          )
+        ],
+      ),
+    );
+  }
+
+  getTitleImageRowWidget() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          flex: 2,
+          child: Container(
+            padding: EdgeInsets.only(right: 5),
+            child: Text(
+              widget.info.title,
+              style: TextStyle(fontSize: 17, color: Colors.black),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Container(
+            child: CachedNetworkImage(
+              imageUrl: widget.info.imageList[0].url,
+              fit: BoxFit.cover,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  getTitleImageColumnWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          child: Text(
+            widget.info.title,
+            style: TextStyle(fontSize: 17, color: Colors.black),
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.only(top: 10),
+          width: ScreenUtils.screenW(context) - 30,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: getCarsImageWidget(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  getTitleImageVideoColumnWidget(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(bottom: 5),
+          child: Text(
+            widget.info.title,
+            style: TextStyle(fontSize: 17, color: Colors.black),
+          ),
+        ),
+        Container(
+          width: ScreenUtils.screenW(context) - 30,
+          child: CachedNetworkImage(
+            fit: BoxFit.cover,
+            imageUrl: widget.info.imageList[0].url,
+            width: ScreenUtils.screenW(context) - 30,
+            height: (widget.info.imageList[0].height / widget.info.imageList[0].width) * (ScreenUtils.screenW(context) - 30),
+          ),
+        )
+      ],
+    );
+  }
+
+  getBottomWidget() {
+    return Container(
+      height: 40,
+      child: Row(
+        children: <Widget>[
+          widget.info.label.length == 0
+              ? Container()
+              : Container(
+                  height: 20,
+                  padding: EdgeInsets.only(left: 5, right: 5),
+                  margin: EdgeInsets.only(right: 5),
+                  child: Center(
+                    child: Text(
+                      widget.info.label,
+                      style: TextStyle(color: Colors.red, fontSize: 12),
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.red, width: 0.5),
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                ),
+          Container(
+            child: Text(
+              widget.info.repostInfo.name,
+              style: TextStyle(color: Color.fromRGBO(150, 150, 150, 1)),
+            ),
+          ),
+          Container(
+              padding: EdgeInsets.only(left: 10),
+              child: Text(
+                widget.info.commentCount.toString() + '评论',
+                style: TextStyle(
+                  color: Color.fromRGBO(150, 150, 150, 1),
+                ),
+              )),
+          Container(
+              padding: EdgeInsets.only(left: 10),
+              child: Text(
+                Utils.getTimeStamp(widget.info.behotTime),
+                style: TextStyle(
+                  color: Color.fromRGBO(150, 150, 150, 1),
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  getCarsImageWidget() {
+    return widget.info.imageList.map((item) {
+      return Container(
+          width: (ScreenUtils.screenW(context) - 30) / 3,
+          padding: EdgeInsets.only(right: 10),
+          child: CachedNetworkImage(
+            fit: BoxFit.cover,
+            imageUrl: item.url,
+          ));
+    }).toList();
   }
 }

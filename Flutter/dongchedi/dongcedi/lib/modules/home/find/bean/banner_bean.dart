@@ -53,9 +53,10 @@ class VideoInfoBean {
   RepostInfo repostInfo;
   UserInfo userInfo;
   int diggCount;
+  String label;
 
  
-  VideoInfoBean.fromParams({this.readCount, this.behotTime , this.title ,this.imageList, this.repostInfo , this.commentCount , this.diggCount});
+  VideoInfoBean.fromParams({this.readCount, this.behotTime , this.title ,this.imageList, this.repostInfo , this.commentCount , this.diggCount , this.label});
 
   factory VideoInfoBean(jsonStr) => jsonStr == null ? null : jsonStr is String ? new VideoInfoBean.fromJson(json.decode(jsonStr)) : new VideoInfoBean.fromJson(jsonStr);
   VideoInfoBean.fromJson(jsonRes){
@@ -66,6 +67,7 @@ class VideoInfoBean {
     repostInfo = RepostInfo.fromJson(jsonRes['repost_info']);
     userInfo = UserInfo.fromJson(jsonRes['user_info']);
     diggCount = jsonRes['digg_count'];
+    label = jsonRes['label'];
     imageList = jsonRes['image_list'] == null ? null : [];
     for (var imageItem in imageList == null ? [] : jsonRes['image_list']){
        imageList.add(imageItem == null ? null : new VideoImage.fromJson(imageItem));
