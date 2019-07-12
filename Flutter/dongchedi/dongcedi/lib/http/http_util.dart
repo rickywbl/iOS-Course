@@ -39,12 +39,12 @@ class HttpUtil {
     return response;
   }
 
-  Future<dynamic> post(url,{data,options,cancelToken}) async {
+  Future<dynamic> post(url,{data,cancelToken}) async {
     Response response;
     try {
       response = await dio.post(
         url,
-        data : data,
+        queryParameters: data,
         cancelToken: cancelToken
       );
     } on DioError catch (e) {
@@ -53,7 +53,7 @@ class HttpUtil {
       }
       print('post请求发生错误：$e');
     }
-    return response.data;
+    return response;
   }
 
 }

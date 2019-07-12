@@ -9,6 +9,7 @@ import 'home_find_video_cell.dart';
 import 'package:flutter_easyrefresh/ball_pulse_header.dart';
 import 'package:flutter_easyrefresh/ball_pulse_footer.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:dongcedi/router/router.dart';
 
 class FindNewCarPage extends StatefulWidget {
   @override
@@ -126,87 +127,92 @@ class RecommendNewCarCell extends StatefulWidget {
 class _RecommendNewCarCellState extends State<RecommendNewCarCell> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 15, left: 15, right: 15),
-      height: 200,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 40,
-            child: Text(
-              "新车推荐",
-              style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
+    return GestureDetector(
+      // onTap: (){
+      //   Router.pushWithParams(context, Router.carDetailPage, params:{'seriesId':widget.cars.});
+      // },
+      child: Container(
+        margin: EdgeInsets.only(top: 15, left: 15, right: 15),
+        height: 200,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 40,
+              child: Text(
+                "新车推荐",
+                style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          Container(
-            height: 160,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.cars.length,
-              itemBuilder: (context, index) {
-                RecommendNewCarBean car = widget.cars[index];
-                return Container(
-                  height: 130,
-                  width: 160,
-                  margin: EdgeInsets.only(top: 5, bottom: 5, right: 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color.fromRGBO(200, 200, 200, 1.0),
-                        width: 0.5,
+            Container(
+              height: 160,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.cars.length,
+                itemBuilder: (context, index) {
+                  RecommendNewCarBean car = widget.cars[index];
+                  return Container(
+                    height: 130,
+                    width: 160,
+                    margin: EdgeInsets.only(top: 5, bottom: 5, right: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Color.fromRGBO(200, 200, 200, 1.0),
+                          width: 0.5,
+                        ),
                       ),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          height: 80,
-                          padding: EdgeInsets.only(top: 5),
-                          child: CachedNetworkImage(
-                            imageUrl: car.coverUrl,
-                            height: 75,
-                            width: 150,
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            height: 80,
+                            padding: EdgeInsets.only(top: 5),
+                            child: CachedNetworkImage(
+                              imageUrl: car.coverUrl,
+                              height: 75,
+                              width: 150,
+                            ),
                           ),
-                        ),
-                        Container(
-                          child: Text(
-                            car.seriesName,
-                            style: TextStyle(
-                                fontSize: 16,
+                          Container(
+                            child: Text(
+                              car.seriesName,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                            child: Text(
+                              car.price,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            child: Text(
+                              car.onlineData,
+                              style: TextStyle(
+                                fontSize: 14,
                                 color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Container(
-                          child: Text(
-                            car.price,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.orange,
+                              ),
                             ),
-                          ),
-                        ),
-                        Container(
-                          child: Text(
-                            car.onlineData,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
+                      //   color: Color.fromRGBO(Random().nextInt(255), Random().nextInt(255), Random().nextInt(255), 1.0),
                     ),
-                    //   color: Color.fromRGBO(Random().nextInt(255), Random().nextInt(255), Random().nextInt(255), 1.0),
-                  ),
-                );
-              },
-            ),
-          )
-        ],
+                  );
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
